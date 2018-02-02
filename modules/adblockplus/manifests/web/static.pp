@@ -36,22 +36,14 @@ class adblockplus::web::static (
   $ssl_private_key = undef,
   $is_default = true,
   $ensure = 'present',
-  $geoip_enable = false,
-  $geoip_country = undef,
   $deploy_user = 'web-deploy',
   $deploy_user_authorized_keys = undef,
 ) {
 
   include adblockplus::web
-
-  class {'nginx':
-    geoip_country => $geoip_country,
-  }
-
- class {'geoip':
-    cron => {hour => 0, minute => 8, monthday => 15},
-    ensure => geoip_enable ? {false => 'absent', default => 'present'},
-  }
+  include nginx
+  include geoip
+  include ssh
 
   file {"/var/www/$domain":
     ensure => ensure_directory_state($ensure),
@@ -69,23 +61,15 @@ class adblockplus::web::static (
     log => "access_log_$domain",
   }
 
-  #deploy script
-  $deploy_script_path = "/home/$deploy_user/deploy_script.sh"
-
-  #deploy user with authorized_keys and deploy script as forced command
-
   adblockplus::user {$deploy_user:
-    authorized_keys => $deploy_user_authorized_keys ? {
-      undef => [],
-      default => prefix($deploy_user_authorized_keys, "command=\"$deploy_script_path\" "),
-    },
+    authorized_keys => $deploy_user_authorized_keys,
     ensure => $ensure,
     password_hash => '*',
     shell => '/bin/bash',
-    groups => ['www-data']
+    groups => ['www-data'],
   }
 
-  file {$deploy_script_path:
+  file {"/home/$deploy_user/deploy_script.sh":
     content => template('adblockplus/web/static_deploy_script.sh.erb'),
     ensure => $ensure,
     mode => '0755',
