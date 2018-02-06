@@ -3,4 +3,6 @@ classes:
     domain: eyeofiles.com
     repositories:
       "v8":
-
+      "helpcenter":
+        write_users:
+          "gl-help-eyeo-com":
