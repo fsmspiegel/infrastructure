@@ -20,7 +20,11 @@
 #
 define adblockplus::web::fileserver::repository (
   $ensure = 'present',
+<<<<<<< HEAD
   $users = {},
+=======
+  $write_users = {},
+>>>>>>> c896003b7fc0baf5bf1a7941a964bf500b0c7855
 ){
 
   $repositories_directory = "$adblockplus::directory/fileserver"
@@ -41,7 +45,11 @@ define adblockplus::web::fileserver::repository (
     ],
   }
 
+<<<<<<< HEAD
   ensure_resources(adblockplus::user, $users, {
+=======
+  ensure_resources(adblockplus::user, $write_users, {
+>>>>>>> c896003b7fc0baf5bf1a7941a964bf500b0c7855
     ensure => $ensure,
     password_hash => '*',
     groups => ["www-$name"],
