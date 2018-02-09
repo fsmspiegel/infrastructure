@@ -69,8 +69,8 @@ class adblockplus::web::static (
     groups => ['www-data'],
   }
 
-  file {"/home/$deploy_user/deploy_script.sh":
-    content => template('adblockplus/web/static_deploy_script.sh.erb'),
+  file {"/home/$deploy_user/deploy_script.py":
+    source => 'puppet:///modules/adblockplus/web/static/deploy_script.py',
     ensure => $ensure,
     mode => '0755',
     owner => $deploy_user,
